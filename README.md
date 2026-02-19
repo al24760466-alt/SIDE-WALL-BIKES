@@ -73,6 +73,7 @@ El sistema se compone de 5 entidades principales conectadas de manera relacional
   - **Atributos:** `nombre_empresa` (String), `contacto` (String), `telefono` (String), `email` (String).
 
 ---
+Con esto concluimos la expicacion de los diagramas.
 
-*Desarrollado por Santiago Basto Jimenez
+Desarrollado por Santiago Basto Jimenez
 
