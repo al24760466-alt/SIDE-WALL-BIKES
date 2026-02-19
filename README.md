@@ -1,61 +1,77 @@
 # SIDE-WALL-BIKES
+#  SIDE WALL BIKES - Sistema de Gestión de Inventario y Ventas
 
+Este proyecto define la arquitectura de datos y el modelo relacional para el sistema de gestión de **SIDE WALL BIKES**, una tienda de ciclismo especializada en refacciones, mejoras y bicicletas para disciplinas como trail, enduro y downhill. 
 
-##  Descripción del Proyecto
-
-Este repositorio contiene el diseño arquitectónico y modelado de datos para **"SIDE WALL BIKES"**, un sistema de información diseñado para administrar una tienda especializada en ciclismo de alto rendimiento (Enduro y Downhill).
-
-El sistema resuelve la problemática de gestión de inventarios complejos, donde los productos y componentes tienen especificaciones técnicas detalladas y provienen de diversos proveedores internacionales. El software permite:
-* **Control de Stock:** Monitoreo en tiempo real de componentes.
-* **Gestión de Proveedores:** Trazabilidad del origen de cada pieza.
-* **Punto de Venta (POS):** Procesamiento de compras con múltiples artículos.
-* **Historial de Clientes:** Base de datos para fidelización y garantías.
-
-El proyecto cumple con los estándares de normalización de bases de datos (3NF) para garantizar la integridad de la información y evitar redundancias.
+El objetivo principal de este diseño es automatizar y centralizar el flujo de información comercial de la tienda, garantizando un control riguroso del inventario y un seguimiento preciso de las ventas.
 
 ---
 
-##  Motivación y Justificación
+##  Motivación del Proyecto
 
-Como estudiante de ingeniería y practicante de MTB, identifiqué que las soluciones genéricas de punto de venta no se adaptan a las necesidades específicas de una tienda de componentes técnicos.
-* **Problema:** Dificultad para rastrear qué proveedor surtió una pieza específica cuando se requiere garantía, y la complejidad de vender "kits" o múltiples refacciones en un solo ticket.
-* **Solución:** Desarrollar una arquitectura propia que permita relaciones complejas entre el inventario y las ventas, asegurando escalabilidad y profesionalización del negocio desde su etapa temprana.
+El mundo del ciclismo de montaña exige un manejo preciso de inventarios. Desde la venta de una bicicleta completa hasta la comercialización de componentes específicos y upgrades, la tienda requiere un sistema robusto, rápido y escalable.
+
+Al sustituir registros manuales por esta base de datos relacional, la tienda logra:
+- **Trazabilidad total:** Saber qué cliente compró qué componentes, en qué fecha y a qué precio.
+- **Control de Stock en tiempo real:** Prevenir la venta de artículos agotados y optimizar los tiempos de reabastecimiento con proveedores.
+- **Integridad de datos financieros:** Al registrar precios de compra y venta históricos, el sistema sienta las bases para calcular márgenes de ganancia y reportes de ventas.
 
 ---
 
-##  Arquitectura del Sistema
+##  Descripción General del Sistema
 
-A continuación se detallan los modelos diseñados para la estructura de datos y la lógica de negocio.
+El sistema propuesto es una base de datos relacional (estructurada en Tercera Forma Normal - 3FN) diseñada específicamente para gestionar el ciclo completo de ventas y abastecimiento de la tienda. La arquitectura centraliza el catálogo de productos , el directorio de clientes y el registro de proveedores. 
 
-### 1. Modelo Entidad-Relación (Base de Datos)
+El modelo resuelve eficientemente la relación natural de "muchos a muchos" que existe entre las compras de los clientes y los artículos del inventario mediante el uso de una tabla puente transaccional (`Detalle_Compra`). Esto permite que el sistema sea altamente escalable, dejando la estructura lista para integrarse en el futuro con un punto de venta (POS) físico o una plataforma de comercio electrónico.
 
-Este diagrama representa la estructura lógica de la base de datos relacional. Se ha diseñado siguiendo el modelo de Chen para visualizar claramente las entidades fuertes y las interrelaciones.
+---
 
-![Diagrama Entidad Relación](./assets/diagrama_er.png)
+##  Diagramas del Sistema
 
-**Puntos Clave del Diseño:**
-* **Resolución de Relación N:M:** Se implementó la entidad débil `Detalle_Compra` para romper la relación de "Muchos a Muchos" entre `Ventas` y `Productos`. Esto permite que un solo ticket de compra contenga múltiples productos diferentes, registrando la cantidad y el precio histórico de cada uno.
-* **Integridad Referencial:** Uso estricto de Llaves Primarias (PK) y Foráneas (FK) para asegurar que no existan compras sin cliente, ni productos sin proveedor.
-* **Cardinalidad:**
-    * **Proveedor (1) -> (N) Productos:** Un proveedor surte muchos productos.
-    * **Cliente (1) -> (N) Compras:** Un cliente puede tener múltiples historiales de compra.
+A continuación se presentan los diagramas que modelan la arquitectura del sistema:
 
-### 2. Diagrama de Clases (Lógica de Negocio / UML)
+### Diagrama Entidad-Relación (ER)
 
-Este modelo representa la estructura orientada a objetos que tendrá el software. Define las clases, sus atributos (estado) y sus métodos (comportamiento), aplicando principios de encapsulamiento.
 
-![Diagrama UML](./assets/diagrama_uml.png)
+![Diagrama Entidad-Relación de Side Wall Bikes](./DERSWB.jpg)
 
+
+### Diagrama de Clases (UML)
+
+
+![Diagrama UML de Side Wall Bikes](./UMLSWB.jpg)
 
 
 ---
 
-## 💻 Stack Tecnológico (Proyección)
+##  Especificaciones Técnicas y Diccionario de Datos
 
-Este diseño está preparado para ser implementado con las siguientes tecnologías:
+El sistema se compone de 5 entidades principales conectadas de manera relacional:
 
-* **Motor de Base de Datos:** MySQL \.
-* **Backend:** Python
+### 1. Gestión de Usuarios
+- **`Cliente`**: Almacena el directorio de compradores.
+  - **PK:** `ID_cliente` (int)
+  - **Atributos:** `nombre` (String), `apellido` (String), `email` (String), `telefono` (String), `direccion` (String).
+  - *Relación:* `1` a `0..*` con `Compra`.
+
+### 2. Motor Transaccional (Ventas)
+- **`Compra`**: Funciona como el encabezado de la factura o ticket.
+  - **PK:** `ID_compra` (int)
+  - **FK:** `ID_cliente` (int)
+  - **Atributos:** `fecha` (Date), `total` (float), `metodoPago` (String).
+- **`Detalle_Compra`**: Tabla puente transaccional. Registra las partidas individuales de cada ticket, protegiendo el histórico de precios.
+  - **PK:** `ID_detalle` (int)
+  - **FK:** `ID_compra` (int), `ID_producto` (int)
+  - **Atributos:** `cantidad` (int), `precioUnitario` (float).
+
+### 3. Inventario y Cadena de Suministro
+- **`Producto`**: El catálogo de refacciones, bicicletas y accesorios.
+  - **PK:** `ID_producto` (int)
+  - **FK:** `ID_proveedor` (int)
+  - **Atributos:** `nombre` (String), `descripcion` (String), `precio_venta` (float), `precio_compra` (float), `stock` (int), `categoria` (String).
+- **`Proveedor`**: Catálogo de distribuidores y marcas que surten a la tienda.
+  - **PK:** `ID_proveedor` (int)
+  - **Atributos:** `nombre_empresa` (String), `contacto` (String), `telefono` (String), `email` (String).
 
 ---
-*Desarrollado por Santiago Basto Jimenez - Estudiante de Ingeniería en Sistemas Computacionales.*
+
