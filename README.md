@@ -1,4 +1,3 @@
-# SIDE-WALL-BIKES
 #  SIDE WALL BIKES - Sistema de Gestión de Inventario y Ventas
 
 Este proyecto define la arquitectura de datos y el modelo relacional para el sistema de gestión de **SIDE WALL BIKES**, una tienda de ciclismo especializada en refacciones, mejoras y bicicletas para disciplinas como trail, enduro y downhill. 
@@ -74,4 +73,6 @@ El sistema se compone de 5 entidades principales conectadas de manera relacional
   - **Atributos:** `nombre_empresa` (String), `contacto` (String), `telefono` (String), `email` (String).
 
 ---
+
+*Desarrollado por Santiago Basto Jimenez
 
